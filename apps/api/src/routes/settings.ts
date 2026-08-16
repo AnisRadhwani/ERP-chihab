@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import type { AdSpendAllocation } from "@ecom-erp/shared";
 import {
   getSettings,
   updateSettings,
@@ -9,6 +10,18 @@ import {
 import { config } from "../config/env.js";
 
 const router = Router();
+
+type AdSpendAllocationEntry = AdSpendAllocation["allocations"][number];
+
+const adSpendAllocationEntrySchema: z.ZodType<AdSpendAllocationEntry> =
+  z.object({
+    productId: z.string().min(1),
+    spendUSD: z.number().min(0),
+  });
+
+const saveAdSpendBodySchema = z.object({
+  allocations: z.array(adSpendAllocationEntrySchema),
+});
 
 router.get("/", async (_req, res, next) => {
   try {
@@ -48,16 +61,7 @@ router.get("/ad-spend/:date", async (req, res, next) => {
 
 router.put("/ad-spend/:date", async (req, res, next) => {
   try {
-    const body = z
-      .object({
-        allocations: z.array(
-          z.object({
-            productId: z.string(),
-            spendUSD: z.number().min(0),
-          })
-        ),
-      })
-      .parse(req.body);
+    const body = saveAdSpendBodySchema.parse(req.body);
 
     const allocation = await saveAdSpendAllocation({
       date: req.params.date,
