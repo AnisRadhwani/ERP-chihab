@@ -33,16 +33,16 @@ function buildApiUrl(path: string): string {
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
-  const contentType = response.headers.get("content-type") ?? "";
-  if (!contentType.includes("application/json")) {
+  let json: { success?: boolean; data?: T; error?: string };
+
+  try {
+    json = await response.json();
+  } catch {
     throw new Error(
-      response.ok
-        ? "Réponse API invalide"
-        : `API error: ${response.status}`
+      response.ok ? "Réponse API invalide" : `API error: ${response.status}`
     );
   }
 
-  const json = await response.json();
   if (!response.ok || !json.success) {
     throw new Error(json.error ?? `API error: ${response.status}`);
   }
@@ -90,8 +90,28 @@ export interface HealthStatus {
   firebaseConfigured: boolean;
 }
 
-export function fetchHealth(): Promise<HealthStatus> {
-  return apiGet<HealthStatus>("/api/health");
+export async function fetchHealth(): Promise<HealthStatus> {
+  const response = await fetch(buildApiUrl("/api/health"));
+
+  let json: {
+    success?: boolean;
+    data?: HealthStatus;
+    error?: string;
+  };
+
+  try {
+    json = await response.json();
+  } catch {
+    throw new Error(
+      response.ok ? "Réponse API invalide" : `API error: ${response.status}`
+    );
+  }
+
+  if (!response.ok || !json.success || json.data?.status !== "ok") {
+    throw new Error(json.error ?? `API error: ${response.status}`);
+  }
+
+  return json.data;
 }
 
 export function getApiBaseUrl(): string {

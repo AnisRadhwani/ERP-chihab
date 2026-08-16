@@ -19,8 +19,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchHealth()
-      .then(setHealth)
-      .catch((err: Error) => setError(err.message));
+      .then((data) => {
+        setHealth(data);
+        setError(null);
+      })
+      .catch((err: Error) => {
+        setHealth(null);
+        setError(err.message);
+      });
 
     dashboardApi
       .today()
@@ -40,14 +46,14 @@ export default function DashboardPage() {
         description="Vue d'ensemble de la performance du jour"
       />
 
-      {error && (
+      {error && health?.status !== "ok" && (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           Backend non connecté — démarrez l&apos;API avec{" "}
           <code className="rounded bg-amber-100 px-1">npm run dev</code>
         </div>
       )}
 
-      {health && (
+      {health?.status === "ok" && (
         <div className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
           API connectée — Mode mock : {health.mockMode ? "ON" : "OFF"} · Firebase
           : {health.firebaseConfigured ? " configuré" : " non configuré"}
