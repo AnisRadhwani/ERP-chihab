@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+firebase.txt
+apis.txt
+*-service-account.json
+*-firebase-adminsdk-*.json
+ecom-erp-*-firebase-adminsdk-*.json
+serviceAccountKey.json
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Vite
+apps/web/dist/
+
+# Coverage
+coverage/
