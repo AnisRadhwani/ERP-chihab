@@ -12,6 +12,7 @@
     "dev:web": "npm run dev -w @ecom-erp/web",
     "dev:api": "npm run dev -w @ecom-erp/api",
     "build": "npm run build -w @ecom-erp/shared && npm run build -w @ecom-erp/api && npm run build -w @ecom-erp/web",
+    "vercel-build": "npm run build",
     "lint": "npm run lint -w @ecom-erp/web && npm run lint -w @ecom-erp/api"
   },
   "devDependencies": {
