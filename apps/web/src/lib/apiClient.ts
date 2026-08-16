@@ -1,19 +1,6 @@
-const LOCALHOST_PATTERN = /localhost|127\.0\.0\.1/i;
-
-/** Production uses same-origin /api/...; dev uses Vite proxy when empty. */
+/** Same-origin /api in production; Vite dev server proxies /api → localhost:3000. */
 function resolveApiBaseUrl(): string {
-  const configured = (import.meta.env.VITE_API_URL ?? "")
-    .trim()
-    .replace(/\/+$/, "");
-
-  if (import.meta.env.PROD) {
-    if (!configured || LOCALHOST_PATTERN.test(configured)) {
-      return "";
-    }
-    return configured;
-  }
-
-  return configured;
+  return "";
 }
 
 /** Join base + path without producing /api/api/... */
