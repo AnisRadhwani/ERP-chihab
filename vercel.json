@@ -13,7 +13,7 @@
       }
     },
     {
-      "src": "api/index.ts",
+      "src": "api/[...path].ts",
       "use": "@vercel/node",
       "config": {
         "includeFiles": "apps/api/**,packages/shared/dist/**"
@@ -23,7 +23,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.ts"
+      "dest": "/api/[...path].ts"
     },
     {
       "handle": "filesystem"
@@ -32,5 +32,11 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/[...path].ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  }
 }

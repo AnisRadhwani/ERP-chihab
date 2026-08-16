@@ -41,6 +41,19 @@ app.use(
 );
 app.use(express.json());
 
+/** Vercel may forward /api/health as /health to functions in api/ */
+app.use((req, _res, next) => {
+  const url = req.url ?? "/";
+  const path = url.split("?")[0] ?? "/";
+  if (path === "/api" || path.startsWith("/api/")) {
+    next();
+    return;
+  }
+  const query = url.includes("?") ? url.slice(url.indexOf("?")) : "";
+  req.url = `/api${path.startsWith("/") ? path : `/${path}`}${query}`;
+  next();
+});
+
 app.use("/api", healthRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/imports", importsRouter);
